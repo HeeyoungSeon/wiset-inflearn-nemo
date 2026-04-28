@@ -73,12 +73,12 @@ data/*.parquet
 
 # Images
 # images/
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.webp
-*.svg
-*.ico
-*.tiff
-*.bmp
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+# *.webp
+# *.svg
+# *.ico
+# *.tiff
+# *.bmp
