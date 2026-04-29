@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemo 부동산 상권 데이터 분석 대시보드</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header-title p {
+            margin: 0.5rem 0 0;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card.full-width {
+            grid-column: span 2;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            border-left: 5px solid var(--primary);
+            padding-left: 1rem;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            border: 1px solid #eee;
+        }
+
+        .insight-box {
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            color: #334155;
+            border-left: 4px solid var(--accent);
+        }
+
+        .insight-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #b45309;
+            display: block;
+        }
+
+        .expert-section {
+            margin-top: 4rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #f8fafc;
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .expert-section h2 {
+            color: #fbbf24;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .expert-content {
+            columns: 2;
+            column-gap: 3rem;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .expert-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            margin-top: 5rem;
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .card.full-width {
+                grid-column: span 1;
+            }
+            .expert-content {
+                columns: 1;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card, .stat-card, .expert-section {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .btn-slides:hover {
+            background-color: #1d4ed8 !important;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <h1>Nemo Real Estate Analytics</h1>
+                <p>20년 경력 전문가가 분석한 상권 데이터 인사이트 대시보드</p>
+            </div>
+            <div class="header-actions" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="report/nemo_eda_slides.html" class="btn-slides" style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">
+                    📊 발표 슬라이드 보기
+                </a>
+                <div class="date">
+                    2026. 04. 29 Update
+                </div>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="label">총 분석 매물</span>
+                <span class="value">678개</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">평균 보증금</span>
+                <span class="value">6,867만원</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">평균 월세</span>
+                <span class="value">532만원</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">평균 권리금</span>
+                <span class="value">4,611만원</span>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <!-- Row 1 -->
+            <div class="card">
+                <h2>보증금 분포 현황</h2>
+                <img src="images/plot_1.png" alt="보증금 분포">
+                <div class="insight-box">
+                    <span class="insight-title">💡 비즈니스 인사이트</span>
+                    3,000~5,000만원 구간이 가장 치열한 표준 시장입니다. 자본금 규모에 따라 레드오션인 중가 시장과 블루오션인 고가/저가 시장을 명확히 타겟팅해야 합니다.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>월세 부담도 분석</h2>
+                <img src="images/plot_2.png" alt="월세 분포">
+                <div class="insight-box">
+                    <span class="insight-title">💡 비즈니스 인사이트</span>
+                    100~300만원 구간의 실속형 매물이 주를 이룹니다. 고정비 부담이 영업 이익률을 압박하는 상권이므로, 임계점을 넘는 매물은 입지 효율성을 재검토해야 합니다.
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="card">
+                <h2>층수별 매물 분포</h2>
+                <img src="images/plot_4.png" alt="층수별 분포">
+                <div class="insight-box">
+                    <span class="insight-title">💡 비즈니스 인사이트</span>
+                    1층의 압도적 선호 속에서도 지하 1층 매물이 2층보다 많습니다. 배달 및 예약제 서비스 업종이 임대료 절감을 위해 하층부를 적극 공략하고 있음을 보여줍니다.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>업종별 평균 임대료</h2>
+                <img src="images/plot_7.png" alt="업종별 월세">
+                <div class="insight-box">
+                    <span class="insight-title">💡 비즈니스 인사이트</span>
+                    주점 및 대형 식당군이 높은 지불 능력을 보입니다. 업종별 수익 모델에 맞는 적정 임대료 한계선을 설정하는 것이 창업 성공의 핵심입니다.
+                </div>
+            </div>
+
+            <!-- Row 3: Correlation -->
+            <div class="card full-width">
+                <h2>보증금-월세-면적 다변량 상관관계</h2>
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <img src="images/plot_8.png" alt="다변량 분석" style="flex: 0.6; max-width: 45%;">
+                    <div style="flex: 1.4; padding: 1.5rem; background: #f8fafc; border-radius: 1rem; border: 1px solid #e2e8f0;">
+                        <p style="font-weight: 700; font-size: 1.3rem; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); display: inline-block;">시장의 효율적 가격 체계와 공간 활용 전략</p>
+                        <p style="font-size: 1.1rem; color: #334155; margin-bottom: 1.5rem;">
+                            보증금과 월세는 0.95에 육박하는 강력한 양의 상관관계를 보입니다. 이는 상권 내 가격 거품이 적고 매우 효율적으로 책정된 시장임을 의미합니다. 
+                            데이터의 시각적 분포를 보면 면적이 커질수록 보증금과 월세가 기하급수적으로 상승하는 '제곱 비례'의 성격이 강하게 나타나고 있습니다. 
+                            따라서 수익성을 극대화하기 위해서는 단순히 넓은 공간을 확보하기보다, 단위 면적당 가치를 높일 수 있는 **'공간의 압축적 활용'**이 유일한 해법입니다.
+                        </p>
+                        <p style="font-size: 1.1rem; color: #334155; margin-bottom: 1.5rem;">
+                            20년 경력의 분석가 관점에서 볼 때, 이 그래프의 중앙 밀집 지역(Cluster)에서 벗어난 매물들에 주목해야 합니다. 
+                            면적 대비 보증금이 낮으면서 월세가 높은 매물은 초기 자본금이 부족한 창업자에게 기회가 될 수 있으며, 
+                            반대로 보증금이 높지만 월세가 현저히 낮은 매물은 장기적인 고정비 부담을 줄여 생존율을 높이는 전략적 선택지가 됩니다.
+                        </p>
+                        <div class="insight-box" style="margin-top: 2rem; background: #fffbeb; border-color: #f59e0b;">
+                            <span class="insight-title" style="font-size: 1.1rem;">📍 전략적 제언</span>
+                            현재 데이터는 상위 10%의 매물이 전체 시장의 관심을 독식하는 구조를 보여줍니다. 
+                            이 다변량 분석 결과는 단순한 가격 정보를 넘어, 귀하의 비즈니스 모델(고회전 소형 점포 vs 고단가 대형 점포)이 
+                            현재 시장의 어느 지점에 위치해야 가장 안전하고 효율적인지를 결정하는 나침반이 될 것입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Keywords -->
+            <div class="card">
+                <h2>제목 핵심 키워드 (TF-IDF)</h2>
+                <img src="images/plot_9.png" alt="키워드 분석">
+                <div class="insight-box">
+                    <span class="insight-title">💡 마케팅 포인트</span>
+                    '무권리', '초역세권' 키워드가 시장의 가장 강력한 소구점입니다. 매물 등록 시 이러한 핵심 키워드를 전략적으로 배치하여 클릭율을 높여야 합니다.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>사용자 관심도 분석</h2>
+                <img src="images/plot_11.png" alt="관심도 분석">
+                <div class="insight-box">
+                    <span class="insight-title">💡 데이터 분석 결과</span>
+                    조회수가 즐겨찾기로 이어지는 전환율이 높은 매물이 진짜 '알짜'입니다. 화려한 광고보다는 실속 있는 조건이 고관여 고객을 유인하는 데 효과적입니다.
+                </div>
+            </div>
+        </div>
+
+        <section class="expert-section">
+            <h2>Veteran Analyst's Master Insight</h2>
+            <div class="expert-content">
+                <p>
+                    Nemo 부동산 상권 데이터를 통해 투영된 현재의 상업용 부동산 시장은 한마디로 '초양극화 속의 생존 전략 경쟁'이라 정의할 수 있습니다. 20년 전의 시장이 단순히 '좋은 자리에 앉으면 돈을 번다'는 지리적 결정론에 따랐다면, 지금의 데이터는 그 자리를 지탱하기 위한 비용 대비 매출 효율성이 얼마나 냉혹하게 계산되고 있는지를 보여줍니다. 
+                </p>
+                <p>
+                    보증금과 월세의 상관관계 분석에서 나타난 0.95에 육박하는 상관계수는 시장 가격이 매우 효율적으로 책정되어 있음을 의미합니다. 임대인들은 자신의 자산 가치를 1원이라도 낮게 평가하지 않으며, 임차인들은 그 비용을 감당하기 위해 더욱 공격적인 키워드로 고객을 유인하고 있습니다. '무권리', '인테리어 완비' 등의 키워드는 임차인들의 절박함과 동시에 새로운 진입자들에게 어필하려는 마케팅 포인트가 어디에 있는지를 정확히 짚어줍니다.
+                </p>
+                <p>
+                    수치적 데이터와 범주형 데이터를 결합하여 도출한 성공의 공식은 '공간의 압축적 활용'입니다. 10~20평 내외의 1층 소형 점포들이 가장 높은 단위 면적당 효율성을 보이며 시장의 실질적인 주인공 역할을 하고 있습니다. 또한 권리금 데이터에서의 양극화는 기회이자 리스크입니다. 무권리 매물은 초기 진입 장벽을 낮춰주지만, 해당 자리가 '검증된 수익성'을 잃었을 가능성도 배제할 수 없습니다.
+                </p>
+                <p>
+                    결론적으로, 이제 부동산은 발로 뛰기 전에 데이터로 먼저 선별해야 하는 시대입니다. 1%의 우량 매물은 이미 데이터상에서 조회수와 즐겨찾기로 그 존재감을 드러내고 있습니다. 본 대시보드가 제시하는 다각도의 상관관계와 시각화 자료를 자신의 비즈니스 모델에 대입해 보십시오. 데이터는 결코 거짓말을 하지 않습니다. 다만 그것을 읽어내는 통찰력이 결과를 바꿀 뿐입니다.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Nemo Property Analytics Center. All rights reserved.</p>
+            <p>본 대시보드는 실시간 수집 데이터를 기반으로 20년 경력 분석가가 검수한 결과입니다.</p>
+        </footer>
+    </div>
+</body>
+</html>
