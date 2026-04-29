@@ -19,11 +19,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build Marp Slide
+        run: |
+          mkdir -p report
+          npx @marp-team/marp-cli report/nemo_eda_slides.md -o report/nemo_eda_slides.html
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: . # Root directory containing index.html
+          publish_dir: . # Root directory containing index.html and generated report/nemo_eda_slides.html
           publish_branch: gh-pages
           force_orphan: true
 
