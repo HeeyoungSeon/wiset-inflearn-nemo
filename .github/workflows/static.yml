@@ -24,6 +24,7 @@ jobs:
           mkdir -p report
           npx @marp-team/marp-cli report/nemo_eda_slides.md -o report/nemo_eda_slides.html
           npx @marp-team/marp-cli report/nemo_eda_slides_neo.md -o report/nemo_eda_slides_neo.html
+          npx @marp-team/marp-cli report/nemo_eda_slides_mesh.md -o report/nemo_eda_slides_mesh.html
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
